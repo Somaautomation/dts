@@ -52,6 +52,7 @@ export function PhotoMarquee({ images, speed = 40, direction = 'right' }: Props)
               alt={img.alt}
               fill
               draggable={false}
+              loading="eager"
               sizes="320px"
               className="object-cover pointer-events-none"
             />
