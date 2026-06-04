@@ -20,7 +20,6 @@ const FALLBACK_GALLERY_FILES = [
   '08.jpg',
   '07.jpg',
   '06.jpg',
-  '05.jpg',
   '04.jpg',
   '03.jpg',
   '02.jpg',
