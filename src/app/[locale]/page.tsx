@@ -43,10 +43,12 @@ function getGalleryImages() {
   try {
     const dir = path.join(process.cwd(), 'public', 'gallery');
     if (!fs.existsSync(dir)) return [] as { src: string; alt: string }[];
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
     return fs
-      .readdirSync(dir)
-      .filter((f) => /\.(jpe?g|png|webp|avif)$/i.test(f))
-      .sort()
+      .readdirSync(dir, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && /\.(jpe?g|png|webp|avif)$/i.test(entry.name))
+      .map((entry) => entry.name)
+      .sort((a, b) => collator.compare(b, a))
       .map((f) => ({ src: `/gallery/${f}`, alt: f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ') }));
   } catch { return []; }
 }
