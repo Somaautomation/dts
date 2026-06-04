@@ -12,8 +12,6 @@ import { ChatWidget } from '@/components/chatbot/chat-widget';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { WhatsAppFloat } from '@/components/whatsapp/whatsapp-float';
 
-import '../globals.css';
-
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '600', '700', '800'], variable: '--font-poppins', display: 'swap' });
 const notoKannada = Noto_Sans_Kannada({ subsets: ['kannada'], weight: ['400', '500', '700'], variable: '--font-noto-kannada', display: 'swap' });
@@ -61,21 +59,17 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${poppins.variable} ${notoKannada.variable}`} suppressHydrationWarning>
-      <body className={locale === 'kn' ? 'font-kannada' : 'font-sans'}>
-        <AuthProvider>
-          <NextIntlClientProvider messages={messages}>
-            <div className="flex min-h-screen flex-col">
-              <SiteHeader locale={locale} />
-              <main className="flex-1">{children}</main>
-              <SiteFooter />
-            </div>
-            <ChatWidget />
-            <WhatsAppFloat />
-            <Toaster position="top-right" richColors />
-          </NextIntlClientProvider>
-        </AuthProvider>
-      </body>
-    </html>
+    <div className={`${inter.variable} ${poppins.variable} ${notoKannada.variable} ${locale === 'kn' ? 'font-kannada' : 'font-sans'} flex min-h-screen flex-col`}>
+      <AuthProvider>
+        <NextIntlClientProvider messages={messages}>
+          <SiteHeader locale={locale} />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <ChatWidget />
+          <WhatsAppFloat />
+          <Toaster position="top-right" richColors />
+        </NextIntlClientProvider>
+      </AuthProvider>
+    </div>
   );
 }

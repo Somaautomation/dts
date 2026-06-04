@@ -4,9 +4,17 @@ import { Redis } from '@upstash/redis';
 let redis: Redis | null = null;
 let inMemoryStore: Map<string, { count: number; resetAt: number }> = new Map();
 
+function isUsableEnvValue(value: string | undefined) {
+  return Boolean(value && value.trim() && !value.startsWith('PASTE_'));
+}
+
+function isValidRedisRestUrl(url: string | undefined) {
+  return isUsableEnvValue(url) && url!.startsWith('https://');
+}
+
 function getRedis(): Redis | null {
   if (redis) return redis;
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  if (isValidRedisRestUrl(process.env.UPSTASH_REDIS_REST_URL) && isUsableEnvValue(process.env.UPSTASH_REDIS_REST_TOKEN)) {
     redis = new Redis({
       url: process.env.UPSTASH_REDIS_REST_URL,
       token: process.env.UPSTASH_REDIS_REST_TOKEN,
