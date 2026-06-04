@@ -15,6 +15,7 @@ import { Reveal, Stagger, StaggerItem } from '@/components/motion/reveal';
 export const revalidate = 600; // ISR — 10 minutes
 
 const FALLBACK_GALLERY_FILES = [
+  '11.jpg',
   '10.jpg',
   '09.jpg',
   '08.jpg',
