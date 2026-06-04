@@ -69,7 +69,7 @@ export function PhotoMarquee({ images, speed = 40, direction = 'right' }: Props)
         style={{ scrollbarWidth: 'none' }}
       >
         <div
-          className="flex gap-4 animate-marquee will-change-transform"
+          className="flex gap-4 shrink-0 w-max animate-marquee will-change-transform"
           style={{
             animationDuration: `${speed}s`,
             animationDirection: direction === 'right' ? 'reverse' : 'normal',
