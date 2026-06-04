@@ -14,6 +14,18 @@ import { Reveal, Stagger, StaggerItem } from '@/components/motion/reveal';
 
 export const revalidate = 600; // ISR — 10 minutes
 
+const FALLBACK_GALLERY_FILES = [
+  '10.jpg',
+  '09.jpg',
+  '08.jpg',
+  '07.jpg',
+  '06.jpg',
+  '04.jpg',
+  '03.jpg',
+  '02.jpg',
+  '01-dt-srinivas.jpg',
+];
+
 const roles = [
   'Member of the Legislative Council (MLC)',
   'South East Teachers Constituency',
@@ -40,17 +52,24 @@ export default async function HomePage({ params: { locale } }: { params: { local
 }
 
 function getGalleryImages() {
+  const fallback = FALLBACK_GALLERY_FILES.map((f) => ({
+    src: `/gallery/${f}`,
+    alt: f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '),
+  }));
+
   try {
     const dir = path.join(process.cwd(), 'public', 'gallery');
-    if (!fs.existsSync(dir)) return [] as { src: string; alt: string }[];
+    if (!fs.existsSync(dir)) return fallback;
     const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-    return fs
+    const discovered = fs
       .readdirSync(dir, { withFileTypes: true })
       .filter((entry) => entry.isFile() && /\.(jpe?g|png|webp|avif)$/i.test(entry.name))
       .map((entry) => entry.name)
       .sort((a, b) => collator.compare(b, a))
       .map((f) => ({ src: `/gallery/${f}`, alt: f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ') }));
-  } catch { return []; }
+
+    return discovered.length ? discovered : fallback;
+  } catch { return fallback; }
 }
 
 async function getStats() {
