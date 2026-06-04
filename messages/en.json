@@ -1,0 +1,210 @@
+{
+  "brand": {
+    "name": "D.T. Srinivas Connect",
+    "tagline": "Education • Empowerment • Equality • Service",
+    "subtitle": "Voice of Teachers, Strength of Communities, Vision for Karnataka"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "achievements": "Achievements",
+    "membership": "Membership",
+    "teachers": "Teachers Portal",
+    "grievances": "Grievances",
+    "events": "Events",
+    "news": "News & Media",
+    "volunteer": "Volunteer",
+    "contact": "Contact",
+    "login": "Login",
+    "signup": "Join",
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "admin": "Admin"
+  },
+  "hero": {
+    "title": "Dedicated to Teachers, Backward Communities, Education and Social Justice",
+    "subtitle": "MLC • South East Teachers Constituency • Chairman, Karnataka OBC Department",
+    "ctaJoin": "Join Movement",
+    "ctaVolunteer": "Become Volunteer",
+    "ctaGrievance": "Raise Public Issue",
+    "ctaContact": "Contact Office"
+  },
+  "home": {
+    "rolesTitle": "Current Roles",
+    "statsTitle": "Impact in Numbers",
+    "featuredAchievements": "Featured Achievements",
+    "upcomingEvents": "Upcoming Events",
+    "latestNews": "Latest News",
+    "joinMovementTitle": "Be part of the change",
+    "joinMovementText": "Together we can build an empowered Karnataka. Join the movement today.",
+    "stats": {
+      "teachers": "Teachers Supported",
+      "members": "Active Members",
+      "grievances": "Issues Resolved",
+      "events": "Events Conducted"
+    }
+  },
+  "about": {
+    "title": "About D.T. Srinivas",
+    "biographyTitle": "Biography",
+    "timelineTitle": "Journey",
+    "earlyLife": "Early Life",
+    "education": "Education",
+    "publicService": "Public Service",
+    "politicalJourney": "Political Journey",
+    "communityLeadership": "Community Leadership",
+    "educationalLeadership": "Educational Leadership"
+  },
+  "achievements": {
+    "title": "Achievements Portal",
+    "subtitle": "A record of service, reform and impact across Karnataka",
+    "categories": {
+      "education": "Education",
+      "community": "Community Welfare",
+      "legislative": "Legislative Contributions",
+      "infrastructure": "Infrastructure",
+      "teachers": "Teachers",
+      "obc": "OBC",
+      "category_1": "Category-1",
+      "youth": "Youth",
+      "women": "Women"
+    }
+  },
+  "membership": {
+    "title": "Join the Supporters Network",
+    "subtitle": "Become part of a movement for education, empowerment and equality",
+    "types": {
+      "supporter": "Supporter",
+      "volunteer": "Volunteer",
+      "teacher_representative": "Teacher Representative",
+      "youth_member": "Youth Member",
+      "womens_wing": "Women's Wing Member",
+      "community_leader": "Community Leader"
+    },
+    "steps": {
+      "phone": "Mobile Number",
+      "otp": "OTP Verification",
+      "profile": "Profile",
+      "location": "Your Location",
+      "type": "Membership Type",
+      "done": "Confirmation"
+    },
+    "card": {
+      "title": "Digital Membership Card",
+      "download": "Download PDF",
+      "share": "Share",
+      "memberId": "Member ID",
+      "validTill": "Valid till",
+      "issuedOn": "Issued on"
+    }
+  },
+  "teachers": {
+    "title": "Teachers Portal",
+    "subtitle": "South East Teachers Constituency — your voice in the Legislative Council",
+    "services": {
+      "grievance": "Grievance Filing",
+      "transfer": "Transfer Request",
+      "promotion": "Promotion Support",
+      "pension": "Pension Assistance",
+      "policy": "Policy Feedback",
+      "representation": "Representation"
+    },
+    "workflow": "Teacher → Office Team → Follow-up → Resolution"
+  },
+  "grievances": {
+    "title": "Public Grievance Portal",
+    "subtitle": "Submit, track and resolve public issues across Karnataka",
+    "submit": "Submit Grievance",
+    "track": "Track Status",
+    "categories": {
+      "ROADS": "Roads",
+      "WATER": "Water",
+      "ELECTRICITY": "Electricity",
+      "EDUCATION": "Education",
+      "HEALTH": "Health",
+      "GOVERNMENT_BENEFITS": "Government Benefits",
+      "SOCIAL_WELFARE": "Social Welfare",
+      "AGRICULTURE": "Agriculture",
+      "EMPLOYMENT": "Employment",
+      "OTHER": "Other"
+    },
+    "status": {
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "ASSIGNED": "Assigned",
+      "IN_PROGRESS": "In Progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed",
+      "REJECTED": "Rejected"
+    }
+  },
+  "events": {
+    "title": "Events & Campaigns",
+    "subtitle": "Join meetings, conferences, and community programmes",
+    "register": "Register",
+    "registered": "Registered",
+    "scanQr": "Scan QR for attendance",
+    "upcoming": "Upcoming",
+    "past": "Past"
+  },
+  "news": {
+    "title": "News & Media Center",
+    "subtitle": "Press releases, speeches, interviews and updates",
+    "readMore": "Read more",
+    "gallery": "Media Gallery",
+    "downloads": "Downloads"
+  },
+  "volunteer": {
+    "title": "Volunteer Management",
+    "subtitle": "Help build Karnataka — one community at a time",
+    "join": "Become a Volunteer",
+    "skills": "Skills",
+    "availability": "Availability",
+    "tasks": "My Tasks",
+    "rewards": "Recognition & Badges"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Log in with your registered mobile number",
+    "phoneLabel": "Mobile Number",
+    "otpLabel": "Enter OTP",
+    "sendOtp": "Send OTP",
+    "resendOtp": "Resend OTP",
+    "verify": "Verify & Continue",
+    "adminLogin": "Admin login",
+    "emailLabel": "Email",
+    "passwordLabel": "Password"
+  },
+  "chat": {
+    "title": "Ask the Office",
+    "placeholder": "How can we help you today?",
+    "send": "Send",
+    "disclaimer": "AI-assisted responses. For sensitive matters, please contact our office."
+  },
+  "footer": {
+    "office": "Office of D.T. Srinivas",
+    "contact": "Contact",
+    "quickLinks": "Quick Links",
+    "follow": "Follow Us",
+    "subscribe": "Subscribe to updates",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "search": "Search",
+    "viewAll": "View All",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "selectDistrict": "Select District",
+    "selectTaluk": "Select Taluk",
+    "language": "Language",
+    "english": "English",
+    "kannada": "ಕನ್ನಡ"
+  }
+}

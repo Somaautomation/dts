@@ -1,0 +1,562 @@
+// Prisma schema for D.T. Srinivas Connect
+// Database: PostgreSQL (Neon free tier recommended)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============== AUTH / USERS ==============
+
+enum Role {
+  CITIZEN
+  MEMBER
+  VOLUNTEER
+  TEACHER
+  OFFICE_STAFF
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum MembershipType {
+  SUPPORTER
+  VOLUNTEER
+  TEACHER_REPRESENTATIVE
+  YOUTH_MEMBER
+  WOMENS_WING
+  COMMUNITY_LEADER
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  phone         String    @unique
+  email         String?   @unique
+  name          String
+  nameKannada   String?
+  passwordHash  String?
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  image         String?
+  role          Role      @default(CITIZEN)
+  language      String    @default("en") // "en" | "kn"
+
+  // Address
+  district String?
+  taluk    String?
+  booth    String?
+  pincode  String?
+
+  // Demographics
+  dateOfBirth DateTime?
+  gender      String?
+  occupation  String?
+  caste       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
+
+  membership   Membership?
+  volunteer    Volunteer?
+  teacher      Teacher?
+  grievances   Grievance[]
+  eventRegs    EventRegistration[]
+  accounts     Account[]
+  sessions     Session[]
+  chatSessions ChatSession[]
+  auditLogs    AuditLog[]
+  notifications Notification[]
+
+  @@index([district, taluk])
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model OtpRequest {
+  id        String   @id @default(cuid())
+  phone     String
+  codeHash  String
+  purpose   String   // "signup" | "login" | "password_reset"
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([phone, purpose])
+}
+
+// ============== MEMBERSHIP ==============
+
+model Membership {
+  id           String           @id @default(cuid())
+  userId       String           @unique
+  membershipId String           @unique // Human-readable: DTSC-2026-XXXXXX
+  type         MembershipType   @default(SUPPORTER)
+  status       MembershipStatus @default(PENDING)
+  qrCode       String?          @db.Text // base64
+  cardUrl      String? // generated PDF URL
+  validFrom    DateTime         @default(now())
+  validTo      DateTime?
+  joinedAt     DateTime         @default(now())
+  approvedAt   DateTime?
+  approvedBy   String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, type])
+}
+
+// ============== VOLUNTEER ==============
+
+model Volunteer {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  skills       String[] // ["social-media", "field-work", "translation"]
+  availability String   // "weekends" | "evenings" | "full-time" | "flexible"
+  district     String
+  taluk        String
+  booth        String?
+  experience   String?  @db.Text
+  motivation   String?  @db.Text
+  rating       Float    @default(0)
+  totalTasks   Int      @default(0)
+  completedTasks Int    @default(0)
+  badges       String[]
+  joinedAt     DateTime @default(now())
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks VolunteerTask[]
+
+  @@index([district, taluk])
+}
+
+enum TaskStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model VolunteerTask {
+  id          String     @id @default(cuid())
+  volunteerId String
+  title       String
+  description String     @db.Text
+  category    String     // "event", "campaign", "grievance-followup", etc.
+  status      TaskStatus @default(ASSIGNED)
+  priority    String     @default("medium")
+  dueDate     DateTime?
+  completedAt DateTime?
+  assignedBy  String?
+  notes       String?    @db.Text
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  volunteer Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  event     Event?    @relation(fields: [eventId], references: [id])
+  eventId   String?
+
+  @@index([volunteerId, status])
+}
+
+// ============== TEACHER CONSTITUENCY ==============
+
+enum TeacherCategory {
+  PRIMARY
+  HIGH_SCHOOL
+  PU_COLLEGE
+  DEGREE_COLLEGE
+  PRIVATE_AIDED
+  PRIVATE_UNAIDED
+  GOVERNMENT
+  RETIRED
+}
+
+model Teacher {
+  id            String          @id @default(cuid())
+  userId        String          @unique
+  teacherId     String          @unique // KARTET / TET registration
+  category      TeacherCategory
+  institution   String
+  designation   String
+  subject       String?
+  yearsOfService Int            @default(0)
+  district      String
+  taluk         String
+  verified      Boolean         @default(false)
+  verifiedAt    DateTime?
+  joinedAt      DateTime        @default(now())
+
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requests    TeacherRequest[]
+
+  @@index([district, category])
+}
+
+enum TeacherRequestType {
+  GRIEVANCE
+  TRANSFER
+  PROMOTION
+  PENSION
+  POLICY_FEEDBACK
+  REPRESENTATION
+  OTHER
+}
+
+enum RequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  REJECTED
+}
+
+model TeacherRequest {
+  id          String              @id @default(cuid())
+  teacherId   String
+  ticketId    String              @unique // TR-2026-XXXXXX
+  type        TeacherRequestType
+  subject     String
+  description String              @db.Text
+  attachments String[]
+  status      RequestStatus       @default(SUBMITTED)
+  priority    String              @default("medium")
+  assignedTo  String?
+  resolution  String?             @db.Text
+  resolvedAt  DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  teacher  Teacher          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  updates  RequestUpdate[]
+
+  @@index([status, type])
+}
+
+model RequestUpdate {
+  id              String   @id @default(cuid())
+  teacherRequestId String?
+  grievanceId      String?
+  message          String   @db.Text
+  status           String?
+  authorId         String
+  authorName       String
+  isInternal       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  teacherRequest TeacherRequest? @relation(fields: [teacherRequestId], references: [id], onDelete: Cascade)
+  grievance      Grievance?      @relation(fields: [grievanceId], references: [id], onDelete: Cascade)
+}
+
+// ============== PUBLIC GRIEVANCES ==============
+
+enum GrievanceCategory {
+  ROADS
+  WATER
+  ELECTRICITY
+  EDUCATION
+  HEALTH
+  GOVERNMENT_BENEFITS
+  SOCIAL_WELFARE
+  AGRICULTURE
+  EMPLOYMENT
+  OTHER
+}
+
+model Grievance {
+  id          String            @id @default(cuid())
+  ticketId    String            @unique // GRV-2026-XXXXXX
+  userId      String
+  category    GrievanceCategory
+  subject     String
+  description String            @db.Text
+  location    String
+  district    String
+  taluk       String
+  pincode     String?
+  latitude    Float?
+  longitude   Float?
+  attachments String[]
+  status      RequestStatus     @default(SUBMITTED)
+  priority    String            @default("medium")
+  assignedTo  String?
+  resolution  String?           @db.Text
+  resolvedAt  DateTime?
+  publicVisible Boolean         @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updates RequestUpdate[]
+
+  @@index([status, category])
+  @@index([district, taluk])
+}
+
+// ============== EVENTS ==============
+
+enum EventType {
+  PUBLIC_MEETING
+  TEACHER_CONFERENCE
+  OBC_CONVENTION
+  COMMUNITY_PROGRAM
+  EDUCATIONAL_SUMMIT
+  YOUTH_PROGRAM
+  PRESS_CONFERENCE
+  RALLY
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  titleKn     String?
+  description String    @db.Text
+  descriptionKn String? @db.Text
+  type        EventType
+  startsAt    DateTime
+  endsAt      DateTime
+  venue       String
+  address     String?
+  district    String
+  capacity    Int?
+  bannerUrl   String?
+  isFeatured  Boolean   @default(false)
+  isPublic    Boolean   @default(true)
+  registrationOpen Boolean @default(true)
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  registrations EventRegistration[]
+  tasks         VolunteerTask[]
+
+  @@index([startsAt])
+}
+
+model EventRegistration {
+  id           String   @id @default(cuid())
+  eventId      String
+  userId       String
+  qrCode       String?  @db.Text
+  attended     Boolean  @default(false)
+  attendedAt   DateTime?
+  registeredAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+// ============== ACHIEVEMENTS ==============
+
+enum AchievementCategory {
+  EDUCATION
+  COMMUNITY_WELFARE
+  LEGISLATIVE
+  INFRASTRUCTURE
+  YOUTH
+  WOMEN
+  OBC
+  CATEGORY_1
+  TEACHERS
+}
+
+model Achievement {
+  id          String              @id @default(cuid())
+  slug        String              @unique
+  title       String
+  titleKn     String?
+  summary     String              @db.Text
+  summaryKn   String?             @db.Text
+  body        String              @db.Text
+  bodyKn      String?             @db.Text
+  category    AchievementCategory
+  imageUrl    String?
+  gallery     String[]
+  impactStat  String?             // e.g. "5,000 teachers benefited"
+  achievedOn  DateTime
+  published   Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([category, achievedOn])
+}
+
+// ============== NEWS / MEDIA ==============
+
+enum NewsType {
+  PRESS_RELEASE
+  SPEECH
+  INTERVIEW
+  LEGISLATIVE_UPDATE
+  COMMUNITY_INITIATIVE
+  ANNOUNCEMENT
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  titleKn     String?
+  excerpt     String   @db.Text
+  excerptKn   String?  @db.Text
+  body        String   @db.Text
+  bodyKn      String?  @db.Text
+  type        NewsType
+  coverImage  String?
+  tags        String[]
+  publishedAt DateTime @default(now())
+  author      String   @default("Office of D.T. Srinivas")
+  isPinned    Boolean  @default(false)
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([publishedAt])
+}
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  title       String
+  titleKn     String?
+  type        String   // "photo" | "video" | "document"
+  url         String
+  thumbnailUrl String?
+  album       String?
+  tags        String[]
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+
+  @@index([album, type])
+}
+
+// ============== TIMELINE ==============
+
+model TimelineEvent {
+  id        String   @id @default(cuid())
+  year      Int
+  date      DateTime?
+  title     String
+  titleKn   String?
+  description String @db.Text
+  descriptionKn String? @db.Text
+  category  String   // "education" | "political" | "community" | "personal"
+  imageUrl  String?
+  order     Int      @default(0)
+
+  @@index([year, order])
+}
+
+// ============== AI CHATBOT ==============
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String?
+  language  String        @default("en")
+  context   Json?
+  startedAt DateTime      @default(now())
+  endedAt   DateTime?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      String   // "user" | "assistant" | "system"
+  content   String   @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+// ============== NOTIFICATIONS ==============
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "grievance_update" | "event_reminder" | "announcement"
+  title     String
+  body      String   @db.Text
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+// ============== AUDIT / ANALYTICS ==============
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  resource  String
+  resourceId String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([resource, createdAt])
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  userAgent String?
+  country   String?
+  createdAt DateTime @default(now())
+
+  @@index([path, createdAt])
+}
