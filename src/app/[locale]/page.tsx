@@ -327,6 +327,10 @@ function DailyScheduleSection({ locale, events }: { locale: string; events: any[
                           </div>
                           {dayTag ? <Badge variant="warning">{dayTag}</Badge> : null}
                         </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <Link href={`/${locale}/events/${event.slug}`}><Button size="sm" variant="outline">{t('viewDetails')}</Button></Link>
+                          <Link href={`/${locale}/appointments/book?eventSlug=${encodeURIComponent(event.slug)}&date=${toDateInput(date)}&time=${toTimeInput(date)}`}><Button size="sm">{t('bookAppointment')}</Button></Link>
+                        </div>
                       </div>
                     );
                   })
@@ -383,6 +387,14 @@ function toDateKey(date: Date) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function toDateInput(date: Date) {
+  return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+}
+
+function toTimeInput(date: Date) {
+  return [String(date.getHours()).padStart(2, '0'), String(date.getMinutes()).padStart(2, '0')].join(':');
 }
 
 function NewsSection({ locale, news }: any) {

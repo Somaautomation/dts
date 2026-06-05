@@ -5,17 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin } from 'lucide-react';
 
+import { EventCalendar } from '@/components/events/event-calendar';
+
 export const revalidate = 600;
 
 export default async function EventsPage({ params: { locale } }: { params: { locale: string } }) {
   const [upcoming, past] = await Promise.all([
-    prisma.event.findMany({ where: { startsAt: { gt: new Date() } }, orderBy: { startsAt: 'asc' } }).catch(() => []),
+    prisma.event.findMany({ where: { isPublic: true, startsAt: { gt: new Date() } }, orderBy: { startsAt: 'asc' } }).catch(() => []),
     prisma.event.findMany({ where: { endsAt: { lt: new Date() } }, orderBy: { startsAt: 'desc' }, take: 9 }).catch(() => []),
   ]);
-  return <View locale={locale} upcoming={upcoming} past={past} />;
+  const events = await prisma.event.findMany({ where: { isPublic: true }, orderBy: { startsAt: 'asc' } }).catch(() => []);
+  return <View locale={locale} upcoming={upcoming} past={past} events={events} />;
 }
 
-function View({ locale, upcoming, past }: any) {
+function View({ locale, upcoming, past, events }: any) {
   const t = useTranslations('events');
   return (
     <>
@@ -25,6 +28,8 @@ function View({ locale, upcoming, past }: any) {
           <p className="mt-3 text-white/85 max-w-2xl">{t('subtitle')}</p>
         </div>
       </section>
+
+      <EventCalendar locale={locale} events={events} />
 
       <section className="section">
         <div className="container-page space-y-12">

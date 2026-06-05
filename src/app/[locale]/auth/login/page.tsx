@@ -62,7 +62,7 @@ export default function LoginPage({ params: { locale } }: { params: { locale: st
   const adminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const res = await signIn('admin-credentials', { email, password, redirect: false });
+    const res = await signIn('admin-credentials', { email: email.trim().toLowerCase(), password, redirect: false });
     setLoading(false);
     if (res?.error) return toast.error('Invalid credentials');
     router.push(`/${locale}/admin`);

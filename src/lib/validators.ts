@@ -84,7 +84,23 @@ export const chatMessageSchema = z.object({
   language: z.enum(['en', 'kn']).default('en'),
 });
 
+export const appointmentSchema = z.object({
+  eventSlug: z.string().min(1).optional(),
+  name: z.string().min(2).max(120),
+  phone: phoneSchema,
+  preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+  preferredTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+  notes: z.string().max(2000).optional(),
+});
+
+export const appointmentStatusUpdateSchema = z.object({
+  id: z.string().cuid(),
+  status: z.enum(['REQUESTED', 'CONFIRMED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED']),
+  adminNotes: z.string().max(2000).optional(),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type GrievanceInput = z.infer<typeof grievanceSchema>;
 export type TeacherRequestInput = z.infer<typeof teacherRequestSchema>;
 export type VolunteerInput = z.infer<typeof volunteerSchema>;
+export type AppointmentInput = z.infer<typeof appointmentSchema>;

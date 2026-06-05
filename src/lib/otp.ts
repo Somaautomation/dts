@@ -48,6 +48,27 @@ export async function verifyOtp(phone: string, code: string, purpose: string): P
   return valid;
 }
 
+export async function checkOtpValidity(phone: string, code: string, purpose: string): Promise<boolean> {
+  const otp = await prisma.otpRequest.findFirst({
+    where: { phone, purpose, consumed: false, expiresAt: { gt: new Date() } },
+    orderBy: { createdAt: 'desc' },
+  });
+  if (!otp) return false;
+  if (otp.attempts >= 5) return false;
+
+  const valid = await bcrypt.compare(code, otp.codeHash);
+  
+  // Only increment attempts if verification fails or is attempted
+  if (!valid) {
+    await prisma.otpRequest.update({
+      where: { id: otp.id },
+      data: { attempts: { increment: 1 } },
+    });
+  }
+  
+  return valid;
+}
+
 async function sendSms(phone: string, message: string): Promise<void> {
   const key = process.env.MSG91_AUTH_KEY;
   if (!key) {
@@ -55,7 +76,7 @@ async function sendSms(phone: string, message: string): Promise<void> {
     return;
   }
   try {
-    await fetch('https://control.msg91.com/api/v5/flow/', {
+    const response = await fetch('https://control.msg91.com/api/v5/flow/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', authkey: key },
       body: JSON.stringify({
@@ -65,7 +86,20 @@ async function sendSms(phone: string, message: string): Promise<void> {
         recipients: [{ mobiles: `91${phone}`, message }],
       }),
     });
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`MSG91 API error: ${response.status} - ${errorData}`);
+    }
+    
+    const result = await response.json();
+    if (result.type === 'error') {
+      throw new Error(`SMS delivery failed: ${result.message}`);
+    }
+    
+    console.log(`SMS sent successfully to ${phone}`);
   } catch (err) {
-    console.error('SMS send failed', err);
+    console.error('SMS send failed:', err);
+    throw err;
   }
 }

@@ -29,6 +29,11 @@
     "ctaGrievance": "Raise Public Issue",
     "ctaContact": "Contact Office"
   },
+  "banner": {
+    "message1": "Book your appointment from the daily schedule and event pages",
+    "message2": "Office hours: Monday to Saturday, 10:00 AM to 6:00 PM",
+    "message3": "Use the calendar to pick a date and request a time slot"
+  },
   "home": {
     "rolesTitle": "Current Roles",
     "statsTitle": "Impact in Numbers",
@@ -41,6 +46,7 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "viewFullCalendar": "View Full Calendar",
+    "bookAppointment": "Book Appointment",
     "latestNews": "Latest News",
     "joinMovementTitle": "Be part of the change",
     "joinMovementText": "Together we can build an empowered Karnataka. Join the movement today.",
@@ -152,7 +158,24 @@
     "registered": "Registered",
     "scanQr": "Scan QR for attendance",
     "upcoming": "Upcoming",
-    "past": "Past"
+    "past": "Past",
+    "calendarTitle": "Advanced Event Calendar",
+    "calendarSubtitle": "Select any date to see event times, venues, and details for that day.",
+    "selectDate": "Pick a date on the calendar",
+    "selectedDate": "Selected date",
+    "daysWithEvents": "Days with events",
+    "noEventsOnDate": "No events are scheduled for this date.",
+    "viewDetails": "View details",
+    "monthHighlights": "Month highlights",
+    "inThisMonth": "in this month",
+    "event": "event",
+    "events": "events",
+    "appointmentTitle": "Book an Appointment",
+    "appointmentSubtitle": "Choose a date and time for a meeting request with the office.",
+    "appointmentHelpTitle": "How it works",
+    "appointmentHelpSubtitle": "Send your request on WhatsApp with the preferred slot.",
+    "appointmentHelpOne": "Fill in your details, choose a date and time, and share your request.",
+    "appointmentHelpTwo": "The office team will review and confirm the meeting based on availability."
   },
   "news": {
     "title": "News & Media Center",

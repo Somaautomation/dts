@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { AnalyticsCharts } from '@/components/admin/analytics-charts';
 
 const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN', 'MODERATOR', 'OFFICE_STAFF'];
@@ -43,7 +45,10 @@ export default async function AdminDashboard({ params: { locale } }: { params: {
       <div className="container-page space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-brand-blue">Admin Analytics</h1>
-          <Badge variant="primary">{role}</Badge>
+          <div className="flex items-center gap-2">
+            <Link href={`/${locale}/admin/appointments`}><Button variant="outline" size="sm">Manage Appointments</Button></Link>
+            <Badge variant="primary">{role}</Badge>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">

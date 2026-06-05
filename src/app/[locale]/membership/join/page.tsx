@@ -84,7 +84,24 @@ export default function JoinMembershipPage({ params: { locale } }: { params: { l
 
   const verifyAndContinue = async () => {
     if (!/^\d{6}$/.test(form.otp)) return toast.error('OTP must be 6 digits');
-    setStep(3);
+    
+    setLoading(true);
+    try {
+      const normalizedPhone = normalizeIndianPhone(form.phone);
+      const res = await fetch('/api/auth/otp/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: normalizedPhone, otp: form.otp, purpose: 'signup' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'OTP verification failed');
+      toast.success('OTP verified successfully');
+      setStep(3);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const submit = async () => {
@@ -157,10 +174,10 @@ export default function JoinMembershipPage({ params: { locale } }: { params: { l
                 <CardDescription>Enter the 6-digit code sent to +91 {form.phone}</CardDescription>
                 <Input inputMode="numeric" maxLength={6} placeholder="123456" value={form.otp} onChange={update('otp')} className="text-center text-2xl tracking-[1em]" />
                 <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
-                  <Button className="flex-1" onClick={verifyAndContinue}>Continue</Button>
+                  <Button variant="outline" onClick={() => setStep(1)} disabled={loading}>Back</Button>
+                  <Button className="flex-1" disabled={loading || !/^\d{6}$/.test(form.otp)} onClick={verifyAndContinue}>{loading ? 'Verifying…' : 'Continue'}</Button>
                 </div>
-                <button onClick={requestOtp} className="text-sm text-brand-blue hover:underline">Resend OTP</button>
+                <button onClick={requestOtp} disabled={loading} className="text-sm text-brand-blue hover:underline disabled:opacity-50 disabled:cursor-not-allowed">Resend OTP</button>
               </div>
             )}
 

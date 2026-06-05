@@ -19,6 +19,7 @@ export default async function Dashboard({ params: { locale } }: { params: { loca
       volunteer: { include: { tasks: { orderBy: { createdAt: 'desc' }, take: 5 } } },
       teacher: true,
       grievances: { orderBy: { createdAt: 'desc' }, take: 5 },
+      appointments: { include: { event: true }, orderBy: { createdAt: 'desc' }, take: 5 },
       eventRegs: { include: { event: true }, orderBy: { registeredAt: 'desc' }, take: 5 },
       notifications: { where: { read: false }, take: 10 },
     },
@@ -85,6 +86,25 @@ export default async function Dashboard({ params: { locale } }: { params: { loca
                   ))}
                 </ul>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Appointments</CardTitle></CardHeader>
+            <CardContent>
+              {user.appointments.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No appointments requested.</p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {user.appointments.map((a) => (
+                    <li key={a.id} className="flex justify-between items-center">
+                      <span className="truncate">{a.event?.title ?? a.preferredDate.toLocaleDateString('en-IN')}</span>
+                      <Badge variant={a.status === 'CONFIRMED' ? 'success' : a.status === 'CANCELLED' ? 'warning' : 'info'}>{a.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link href={`/${locale}/appointments/book`} className="block mt-4"><Button variant="outline" size="sm" className="w-full">Book Appointment</Button></Link>
             </CardContent>
           </Card>
         </div>

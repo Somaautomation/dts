@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 
 import { locales } from '@/i18n/request';
 import { SiteHeader } from '@/components/layout/site-header';
+import { NotificationBanner } from '@/components/layout/notification-banner';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { ChatWidget } from '@/components/chatbot/chat-widget';
 import { AuthProvider } from '@/components/providers/auth-provider';
@@ -63,6 +64,7 @@ export default async function LocaleLayout({
       <AuthProvider>
         <NextIntlClientProvider messages={messages}>
           <SiteHeader locale={locale} />
+          <NotificationBanner />
           <main className="flex-1">{children}</main>
           <SiteFooter />
           <ChatWidget />
