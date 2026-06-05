@@ -36,18 +36,24 @@ const roles = [
   'Secretary, SEA Group of Institutions',
 ];
 
+const impactStats = {
+  teachers: 45000,
+  members: 900000,
+  grievances: 5000,
+  events: 1500,
+};
+
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
-  const [achievements, events, news, stats] = await Promise.all([
+  const [achievements, events, news] = await Promise.all([
     prisma.achievement.findMany({ where: { published: true }, orderBy: { achievedOn: 'desc' }, take: 3 }).catch(() => []),
     prisma.event.findMany({ where: { startsAt: { gt: new Date() } }, orderBy: { startsAt: 'asc' }, take: 3 }).catch(() => []),
     prisma.newsArticle.findMany({ orderBy: { publishedAt: 'desc' }, take: 3 }).catch(() => []),
-    getStats(),
   ]);
   const gallery = getGalleryImages();
 
   return (
     <>
-      <HomeT locale={locale} stats={stats} achievements={achievements} events={events} news={news} roles={roles} gallery={gallery} />
+      <HomeT locale={locale} achievements={achievements} events={events} news={news} roles={roles} gallery={gallery} />
     </>
   );
 }
@@ -73,27 +79,13 @@ function getGalleryImages() {
   } catch { return fallback; }
 }
 
-async function getStats() {
-  try {
-    const [members, grievances, events, teachers] = await Promise.all([
-      prisma.membership.count(),
-      prisma.grievance.count({ where: { status: { in: ['RESOLVED', 'CLOSED'] } } }),
-      prisma.event.count(),
-      prisma.teacher.count(),
-    ]);
-    return { members, grievances, events, teachers };
-  } catch {
-    return { members: 12500, grievances: 3400, events: 145, teachers: 5200 };
-  }
-}
-
-function HomeT({ locale, stats, achievements, events, news, roles, gallery }: any) {
+function HomeT({ locale, achievements, events, news, roles, gallery }: any) {
   return (
     <>
       <HeroSection locale={locale} />
       <GallerySection images={gallery} />
       <RolesSection roles={roles} />
-      <StatsSection stats={stats} />
+      <StatsSection />
       <AchievementsSection locale={locale} achievements={achievements} />
       <EventsSection locale={locale} events={events} />
       <NewsSection locale={locale} news={news} />
@@ -180,13 +172,13 @@ function RolesSection({ roles }: { roles: string[] }) {
   );
 }
 
-function StatsSection({ stats }: { stats: any }) {
+function StatsSection() {
   const t = useTranslations('home');
   const items = [
-    { icon: <GraduationCap className="h-7 w-7" />, label: t('stats.teachers'), value: stats.teachers },
-    { icon: <Users className="h-7 w-7" />, label: t('stats.members'), value: stats.members },
-    { icon: <FileText className="h-7 w-7" />, label: t('stats.grievances'), value: stats.grievances },
-    { icon: <Calendar className="h-7 w-7" />, label: t('stats.events'), value: stats.events },
+    { icon: <GraduationCap className="h-7 w-7" />, label: t('stats.teachers'), value: impactStats.teachers },
+    { icon: <Users className="h-7 w-7" />, label: t('stats.members'), value: impactStats.members },
+    { icon: <FileText className="h-7 w-7" />, label: t('stats.grievances'), value: impactStats.grievances },
+    { icon: <Calendar className="h-7 w-7" />, label: t('stats.events'), value: impactStats.events },
   ];
   return (
     <section className="section">
