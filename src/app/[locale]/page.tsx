@@ -46,7 +46,7 @@ const impactStats = {
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   const [achievements, events, news] = await Promise.all([
     prisma.achievement.findMany({ where: { published: true }, orderBy: { achievedOn: 'desc' }, take: 3 }).catch(() => []),
-    prisma.event.findMany({ where: { startsAt: { gt: new Date() } }, orderBy: { startsAt: 'asc' }, take: 3 }).catch(() => []),
+    prisma.event.findMany({ where: { startsAt: { gt: new Date() } }, orderBy: { startsAt: 'asc' }, take: 8 }).catch(() => []),
     prisma.newsArticle.findMany({ orderBy: { publishedAt: 'desc' }, take: 3 }).catch(() => []),
   ]);
   const gallery = getGalleryImages();
@@ -88,6 +88,7 @@ function HomeT({ locale, achievements, events, news, roles, gallery }: any) {
       <StatsSection />
       <AchievementsSection locale={locale} achievements={achievements} />
       <EventsSection locale={locale} events={events} />
+      <DailyScheduleSection locale={locale} events={events} />
       <NewsSection locale={locale} news={news} />
       <CTASection locale={locale} />
     </>
@@ -268,6 +269,120 @@ function EventsSection({ locale, events }: any) {
       </div>
     </section>
   );
+}
+
+function DailyScheduleSection({ locale, events }: { locale: string; events: any[] }) {
+  const t = useTranslations('home');
+  const now = new Date();
+  const todayKey = toDateKey(now);
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowKey = toDateKey(tomorrow);
+
+  const schedule = (events ?? []).slice(0, 6);
+  const monthDate = schedule.length ? new Date(schedule[0].startsAt) : now;
+  const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const monthName = monthDate.toLocaleDateString(locale === 'kn' ? 'kn-IN' : 'en-IN', { month: 'long', year: 'numeric' });
+
+  const eventsByDate = new Map<string, number>();
+  for (const event of schedule) {
+    const key = toDateKey(new Date(event.startsAt));
+    eventsByDate.set(key, (eventsByDate.get(key) ?? 0) + 1);
+  }
+
+  return (
+    <section className="section bg-brand-gray">
+      <div className="container-page">
+        <Reveal className="mb-8">
+          <h2 className="text-3xl font-bold text-brand-blue">{t('dailyScheduleTitle')}</h2>
+          <p className="text-muted-foreground mt-2">{t('dailyScheduleSubtitle')}</p>
+          <div className="w-16 h-1 bg-brand-saffron mt-3 rounded" />
+        </Reveal>
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Reveal>
+            <Card className="card-advanced h-full">
+              <CardHeader>
+                <CardTitle>{t('dailyScheduleTitle')}</CardTitle>
+                <CardDescription>{t('upcomingEvents')}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {schedule.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{t('noSchedule')}</p>
+                ) : (
+                  schedule.map((event) => {
+                    const date = new Date(event.startsAt);
+                    const dateKey = toDateKey(date);
+                    const dayTag = dateKey === todayKey ? t('today') : dateKey === tomorrowKey ? t('tomorrow') : null;
+                    return (
+                      <div key={event.id} className="rounded-lg border bg-white p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="font-semibold text-brand-blue leading-tight">{locale === 'kn' && event.titleKn ? event.titleKn : event.title}</p>
+                            <p className="text-sm text-muted-foreground mt-1">{date.toLocaleDateString(locale === 'kn' ? 'kn-IN' : 'en-IN', { weekday: 'short', day: 'numeric', month: 'short' })} • {date.toLocaleTimeString(locale === 'kn' ? 'kn-IN' : 'en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
+                            <p className="text-sm text-muted-foreground">{event.venue}, {event.district}</p>
+                          </div>
+                          {dayTag ? <Badge variant="warning">{dayTag}</Badge> : null}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+                <Link href={`/${locale}/events`}><Button variant="outline" size="sm">{t('viewFullCalendar')}</Button></Link>
+              </CardContent>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <Card className="card-advanced h-full">
+              <CardHeader>
+                <CardTitle>{t('calendarTitle')}</CardTitle>
+                <CardDescription>{monthName}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-7 gap-2 text-center text-xs font-medium text-muted-foreground mb-3">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                    <div key={day}>{day}</div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: firstDay }).map((_, index) => (
+                    <div key={`blank-${index}`} className="h-10 rounded-md bg-transparent" />
+                  ))}
+                  {Array.from({ length: daysInMonth }).map((_, index) => {
+                    const day = index + 1;
+                    const date = new Date(year, month, day);
+                    const key = toDateKey(date);
+                    const hasEvents = eventsByDate.has(key);
+                    const isToday = key === todayKey;
+                    return (
+                      <div
+                        key={key}
+                        className={`h-10 rounded-md border flex items-center justify-center text-sm relative ${isToday ? 'border-brand-blue bg-brand-blue/10 font-semibold text-brand-blue' : hasEvents ? 'border-brand-saffron/40 bg-brand-saffron/10 text-brand-blue' : 'border-border bg-white text-foreground'}`}
+                      >
+                        {day}
+                        {hasEvents ? <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-brand-saffron" /> : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function toDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function NewsSection({ locale, news }: any) {
