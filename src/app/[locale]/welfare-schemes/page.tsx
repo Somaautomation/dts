@@ -337,7 +337,7 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
     </>
   );
 }
-      description: 'Financial assistance for women heads of eligible households.',
+
       benefits: [
         '₹2,000 per month financial assistance',
         'Direct transfer to bank accounts',
