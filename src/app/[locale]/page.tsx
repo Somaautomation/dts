@@ -75,7 +75,18 @@ function getGalleryImages() {
       .sort((a, b) => collator.compare(b, a))
       .map((f) => ({ src: `/gallery/${f}`, alt: f.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ') }));
 
-    return discovered.length ? discovered : fallback;
+    const featured = discovered.find((img) => img.src === '/gallery/13.jpg');
+    const ordered = featured
+      ? [featured, ...discovered.filter((img) => img.src !== '/gallery/13.jpg')]
+      : discovered;
+
+    return ordered.length
+      ? ordered.map((img) =>
+          img.src === '/gallery/13.jpg'
+            ? { ...img, caption: 'A Krishnappa Ex-Minister' }
+            : img,
+        )
+      : fallback;
   } catch { return fallback; }
 }
 
@@ -100,22 +111,6 @@ function HeroSection({ locale }: { locale: string }) {
   return (
     <section className="relative overflow-hidden gradient-brand text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,153,51,0.25),_transparent_60%)]" />
-      <div className="absolute right-4 top-4 z-20 md:right-8 md:top-8">
-        <div className="w-32 md:w-40 rounded-xl overflow-hidden border border-white/30 shadow-xl bg-black/20 backdrop-blur-sm">
-          <div className="relative aspect-[4/5]">
-            <Image
-              src="/gallery/13.jpg"
-              alt="A Krishnappa Ex-Minister"
-              fill
-              sizes="(min-width: 768px) 160px, 128px"
-              className="object-cover"
-            />
-          </div>
-          <p className="px-2 py-2 text-[11px] md:text-xs font-semibold text-white/95 text-center leading-tight">
-            A Krishnappa Ex-Minister
-          </p>
-        </div>
-      </div>
       <div className="container-page relative py-20 md:py-28 grid gap-10 md:grid-cols-2 items-center">
         <Reveal className="space-y-6">
           <Badge variant="warning" className="bg-brand-saffron/20 text-brand-saffron border-brand-saffron/40">
