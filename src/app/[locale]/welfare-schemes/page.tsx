@@ -86,13 +86,10 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
         <div className="container-page">
           <Reveal>
             <h1 className="text-4xl md:text-5xl font-bold">
-              {t('title', 'Karnataka Government Welfare Schemes')}
+              {t('title')}
             </h1>
             <p className="mt-3 text-white/85 max-w-3xl text-lg">
-              {t(
-                'subtitle',
-                'Explore and apply for Karnataka Government welfare schemes designed to empower citizens and improve quality of life.'
-              )}
+              {t('subtitle')}
             </p>
           </Reveal>
         </div>
@@ -125,13 +122,10 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
         <div className="container-page">
           <Reveal>
             <h2 className="text-3xl font-bold text-brand-blue mb-3">
-              {t('portalsTitle', 'Official Application Portals')}
+              {t('portalsTitle')}
             </h2>
             <p className="text-gray-700 mb-8 max-w-2xl">
-              {t(
-                'portalsDescription',
-                'Apply directly to official Karnataka Government portals for these welfare schemes.'
-              )}
+              {t('portalsDescription')}
             </p>
           </Reveal>
 
@@ -179,13 +173,10 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
         <div className="container-page text-center">
           <Reveal>
             <h2 className="text-3xl font-bold text-brand-blue mb-4">
-              {t('ctaTitle', 'Ready to Apply?')}
+              {t('ctaTitle')}
             </h2>
             <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
-              {t(
-                'ctaDescription',
-                'Visit the Seva Sindhu Portal to explore all schemes and submit your application. Support is available for the entire process.'
-              )}
+              {t('ctaDescription')}
             </p>
           </Reveal>
 
@@ -212,7 +203,7 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
               <div className="text-center">
                 <div className="text-4xl mb-4">📋</div>
                 <h3 className="font-semibold text-brand-blue mb-2">
-                  {t('infoSteps', 'Simple Application')}
+                  {t('infoSteps')}
                 </h3>
                 <p className="text-gray-700 text-sm">
                   Easy online application process through official portals with step-by-step guidance.
@@ -224,7 +215,7 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
               <div className="text-center">
                 <div className="text-4xl mb-4">⚡</div>
                 <h3 className="font-semibold text-brand-blue mb-2">
-                  {t('infoFast', 'Quick Processing')}
+                  {t('infoFast')}
                 </h3>
                 <p className="text-gray-700 text-sm">
                   Fast verification and approval process with direct benefit transfer to your account.
@@ -236,7 +227,7 @@ function WelfareSchemesContent({ locale }: { locale: string }) {
               <div className="text-center">
                 <div className="text-4xl mb-4">🛡️</div>
                 <h3 className="font-semibold text-brand-blue mb-2">
-                  {t('infoSecure', 'Secure Process')}
+                  {t('infoSecure')}
                 </h3>
                 <p className="text-gray-700 text-sm">
                   Your data is handled securely through official government channels with complete privacy.
