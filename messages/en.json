@@ -8,6 +8,7 @@
     "home": "Home",
     "about": "About",
     "achievements": "Achievements",
+    "welfare": "Welfare Schemes",
     "membership": "Membership",
     "teachers": "Teachers Portal",
     "grievances": "Grievances",
@@ -220,6 +221,17 @@
     "rights": "All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Use"
+  },
+  "welfare": {
+    "title": "Karnataka Government Welfare Schemes",
+    "subtitle": "Explore and apply for Karnataka Government welfare schemes designed to empower citizens and improve quality of life.",
+    "portalsTitle": "Official Application Portals",
+    "portalsDescription": "Apply directly to official Karnataka Government portals for these welfare schemes.",
+    "ctaTitle": "Ready to Apply?",
+    "ctaDescription": "Visit the Seva Sindhu Portal to explore all schemes and submit your application. Support is available for the entire process.",
+    "infoSteps": "Simple Application",
+    "infoFast": "Quick Processing",
+    "infoSecure": "Secure Process"
   },
   "common": {
     "submit": "Submit",
