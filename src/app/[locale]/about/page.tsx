@@ -17,7 +17,7 @@ function AboutContent({ locale, timeline }: { locale: string; timeline: any[] })
   const t = useTranslations('about');
   const sections = [
     { key: 'earlyLife', body: 'Born and raised in Karnataka, D.T. Srinivas grew up with a deep commitment to social service and education. His early years instilled the values of equality, fairness, and community responsibility.' },
-    { key: 'education', body: 'A graduate dedicated to lifelong learning, he combined academic excellence with active participation in student bodies and community organizations.' },
+    { key: 'education', body: 'Holding Doctorate (D.Ph.), B.E. (Civil), M.A., LL.B., and MBA qualifications, he combined academic excellence with active participation in student bodies and community organizations, championing education for all.' },
     { key: 'publicService', body: 'Decades of work with marginalized communities, championing welfare, dignity, and opportunity for OBC, Category-1, and Yadava communities.' },
     { key: 'politicalJourney', body: 'A respected voice in Karnataka politics, he was elected as Member of the Legislative Council representing the South East Teachers Constituency.' },
     { key: 'communityLeadership', body: 'State President of the Yadava Sangha and Category-1 Federation, and Chairman of the Karnataka State OBC Department.' },
@@ -31,6 +31,19 @@ function AboutContent({ locale, timeline }: { locale: string; timeline: any[] })
           <Reveal>
             <h1 className="text-4xl md:text-5xl font-bold">{t('title')}</h1>
             <p className="mt-3 text-white/85 max-w-2xl">A journey of service, leadership and reform.</p>
+          </Reveal>
+          <Reveal className="mt-6" delay={0.08}>
+            <div className="max-w-3xl rounded-2xl bg-white/10 border border-white/20 backdrop-blur px-6 py-5">
+              <p className="text-white/95 text-base md:text-lg leading-relaxed">
+                <strong className="font-bold text-white">D.T. Srinivas</strong> is a distinguished educationist, social leader, and Member of the Karnataka Legislative Council representing the <strong className="text-brand-saffron">Karnataka South East Teachers&apos; Constituency</strong>. Holding qualifications including
+                {' '}<span className="font-semibold">Doctorate (D.Ph.), B.E. (Civil), M.A., LL.B., and MBA</span>, he has dedicated his career to education, public service, and the welfare of teachers and students across Karnataka.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {['D.Ph.', 'B.E. (Civil)', 'M.A.', 'LL.B.', 'MBA'].map((q) => (
+                  <span key={q} className="inline-flex items-center rounded-full bg-white/15 border border-white/25 px-3 py-0.5 text-xs font-bold text-white tracking-wide">{q}</span>
+                ))}
+              </div>
+            </div>
           </Reveal>
           <Reveal className="mt-6 flex flex-wrap gap-3" delay={0.12} y={12}>
             <Link href={`/${locale}/membership/join`}>
