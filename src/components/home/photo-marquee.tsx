@@ -54,7 +54,7 @@ export function PhotoMarquee({ images, speed = 40, direction = 'right' }: Props)
               draggable={false}
               loading="eager"
               sizes="320px"
-              className="object-cover pointer-events-none"
+              className={`pointer-events-none ${img.src === '/gallery/13.jpg' ? 'object-cover object-top' : 'object-cover'}`}
             />
             {img.caption && (
               <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs md:text-sm p-3">
